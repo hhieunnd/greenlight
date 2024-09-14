@@ -1,12 +1,28 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/hhieunnd/greenlight/internal/data"
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "create movie handler")
+	data := data.Movie{
+		ID:       1,
+		CreateAt: time.Now(),
+		Title:    "Karatekid",
+		Year:     2011,
+		Runtime:  120,
+		Genres:   []string{"action"},
+		Version:  1,
+	}
+
+	err := app.writeJSON(w, http.StatusOK, data, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
 }
 
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,5 +32,19 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	fmt.Fprintf(w, "show movie handler %d", id)
+	movie := data.Movie{
+		ID:       1,
+		CreateAt: time.Now(),
+		Title:    "Karatekid",
+		Year:     2011,
+		Runtime:  120,
+		Genres:   []string{"action"},
+		Version:  1,
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"movie": movie}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
 }
