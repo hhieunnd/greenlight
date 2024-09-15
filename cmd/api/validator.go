@@ -6,10 +6,10 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func (app *application) validate(input any) map[string]string {
+func (app *application) validate(input any) (err map[string]string) {
 	validationErr := app.validator.Struct(input)
 
-	errorMessages := make(map[string]string)
+	errors := make(map[string]string)
 
 	if validationErr != nil {
 		for _, fieldError := range validationErr.(validator.ValidationErrors) {
@@ -29,9 +29,11 @@ func (app *application) validate(input any) map[string]string {
 				message = fmt.Sprintf("Field '%s' failed validation for '%s' tag.", fieldName, tag)
 			}
 
-			errorMessages[fieldName] = message
+			errors[fieldName] = message
 		}
+
+		return errors
 	}
 
-	return errorMessages
+	return nil
 }
