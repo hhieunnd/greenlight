@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 const version = "1.0.0"
@@ -17,8 +19,9 @@ type config struct {
 }
 
 type application struct {
-	config config
-	logger *log.Logger
+	config    config
+	logger    *log.Logger
+	validator *validator.Validate
 }
 
 func main() {
@@ -28,10 +31,12 @@ func main() {
 	flag.Parse()
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	validator := validator.New()
 
 	app := &application{
-		config: cfg,
-		logger: logger,
+		config:    cfg,
+		logger:    logger,
+		validator: validator,
 	}
 
 	svr := &http.Server{

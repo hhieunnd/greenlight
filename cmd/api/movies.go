@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -8,21 +9,27 @@ import (
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-	data := data.Movie{
-		ID:       1,
-		CreateAt: time.Now(),
-		Title:    "Karatekid",
-		Year:     2011,
-		Runtime:  120,
-		Genres:   []string{"action"},
-		Version:  1,
+	var input struct {
+		Title   string       `json:"title" validate:"required,max=500"`
+		Year    int32        `json:"year" validate:"gte=1888"`
+		Runtime data.Runtime `json:"runtime"`
+		Genres  []string     `json:"genres"`
 	}
 
-	err := app.writeJSON(w, http.StatusOK, data, nil)
+	err := app.readJSON(w, r, &input)
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		app.badRequestResponse(w, r, err)
 		return
 	}
+
+	errorValidation := app.validate(input)
+
+	if errorValidation != nil {
+		app.failedValidationResponse(w, r, errorValidation)
+		return
+	}
+
+	fmt.Fprintf(w, "got inputs %+v\n", input)
 }
 
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {
