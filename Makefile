@@ -27,11 +27,12 @@ POSTGRES_PORT := 5432
 # Create and start a PostgreSQL container
 start_postgres:
 	@echo "Creating and starting PostgreSQL container..."
-	@if docker ps -aq -f name=$(POSTGRES_CONTAINER_NAME) > /dev/null; then \
-		echo "Container $(POSTGRES_CONTAINER_NAME) exists but is stopped. Starting it..."; \
+	@if docker ps -a --filter "name=$(POSTGRES_CONTAINER_NAME)" --format "{{.Names}}" | grep -q '^$(POSTGRES_CONTAINER_NAME)$$'; then \
+		echo "Container '$(POSTGRES_CONTAINER_NAME)' exists."; \
 		docker start $(POSTGRES_CONTAINER_NAME); \
 	else \
-		echo "Creating and starting a new PostgreSQL container..."; \
+		echo "Container '$(POSTGRES_CONTAINER_NAME)' does not exist."; \
+		echo "Creating and starting a new PostgreSQL container ..."; \
 		docker run --name $(POSTGRES_CONTAINER_NAME) \
 				-e POSTGRES_USER=$(POSTGRES_USER) \
 				-e POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
