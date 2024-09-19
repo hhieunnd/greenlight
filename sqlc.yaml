@@ -1,0 +1,10 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./sqlc/"
+    schema: "./migrations/"
+    gen:
+      go:
+        package: "greenlight"
+        out: "greenlight"
+        sql_package: "pgx/v5"

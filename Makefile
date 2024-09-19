@@ -23,6 +23,7 @@ POSTGRES_USER := admin
 POSTGRES_PASSWORD := It123456@
 POSTGRES_DB := greenlight
 POSTGRES_PORT := 5432
+GREENLIGHT_DB_DSN := postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost/$(POSTGRES_DB)?sslmode=disable
 
 # Create and start a PostgreSQL container
 start_postgres:
@@ -53,4 +54,15 @@ stop_postgres:
 		echo "Container $(POSTGRES_CONTAINER_NAME) is not running."; \
 	fi
 
-.PHONY: start_postgres stop_postgres
+migration_add:
+	@read -p "Please enter the migration name:" VAR; \
+	echo "You entered: $$VAR"; \
+	migrate create -seq -ext=.sql -dir ./migrations $$VAR
+
+migration_up:
+	migrate -path=./migrations -database="$(GREENLIGHT_DB_DSN)" up
+
+migration_down:
+	migrate -path=./migrations -database="$(GREENLIGHT_DB_DSN)" down 1
+
+.PHONY: start_postgres stop_postgres migration_add migrations_up migration_down
