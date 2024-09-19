@@ -1,6 +1,10 @@
 package data
 
-import "time"
+import (
+	"time"
+
+	"github.com/jmoiron/sqlx"
+)
 
 type Movie struct {
 	ID       int64     `json:"id"`
@@ -10,4 +14,24 @@ type Movie struct {
 	Runtime  Runtime   `json:"runtime,omitempty"`
 	Genres   []string  `json:"genres"`  // (romance, comedy, etc..)
 	Version  int32     `json:"version"` // Increate when update
+}
+
+type MovieModel struct {
+	DB *sqlx.DB
+}
+
+func (m MovieModel) Insert(movie *Movie) error {
+	return nil
+}
+
+func (m MovieModel) Get(id int64) (*Movie, error) {
+	return nil, nil
+}
+
+func (m MovieModel) Update(movie *Movie) error {
+	return nil
+}
+
+func (m MovieModel) Delete(id int64) error {
+	return nil
 }
