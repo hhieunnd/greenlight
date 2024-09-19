@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/hhieunnd/greenlight/internal/data"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -29,6 +30,7 @@ type application struct {
 	config    config
 	logger    *log.Logger
 	validator *validator.Validate
+	models    data.Models
 }
 
 func main() {
@@ -54,6 +56,7 @@ func main() {
 		config:    cfg,
 		logger:    logger,
 		validator: validator,
+		models:    data.NewModels(db),
 	}
 
 	svr := &http.Server{
